@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="description" content="Hostel booking">
+    <meta name="author" content="">
+    <link rel="icon" href="#">
+    <title>Hostel Booking </title>
+
+    <!-- Calcite Maps Bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/calcite-maps-bootstrap.min-v0.3.css' %}">
+
+    <!-- Calcite Maps -->
+    <link rel="stylesheet" href="{% static 'css/calcite-maps-esri-leaflet.min-v0.3.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/calcite/calcite-ui.css' %}">
+
+    <!-- Load Leaflet from CDN-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@2.0.7"></script>
+
+    <!-- Load Esri Leaflet Geocoder from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.3/dist/esri-leaflet-geocoder.css">
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.3"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="calcite-maps calcite-nav-top calcite-layout-large-title">
+<!-- Navbar -->
+<nav class="navbar calcite-navbar navbar-fixed-top calcite-bg-dark calcite-text-light calcite-bgcolor-green">
+    <!-- Menu -->
+    <div class="dropdown calcite-dropdown calcite-bg-custom calcite-text-light" role="presentation">
+        <a class="dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false">
+            <div class="calcite-dropdown-toggle">
+                <span class="sr-only">Toggle dropdown menu</span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </a>
+        <ul class="dropdown-menu calcite-bgcolor-green">
+            <li><a role="button" data-target="#panelInfo" aria-haspopup="true"><span
+                    class="glyphicon glyphicon-info-sign"></span> Info</a></li>
+            <li><a class="visible-xs" role="button" data-target="#panelSearch" aria-haspopup="true"><span
+                    class="glyphicon glyphicon-search"></span> Search</a></li>
+            <li><a role="button" data-target="#panelBasemaps" aria-haspopup="true"><span
+                    class="glyphicon glyphicon-th-large"></span> Basemaps</a></li>
+            <li><a role="button" id="calciteToggleNavbar" aria-haspopup="true"><span
+                    class="glyphicon glyphicon-fullscreen"></span> Full Map</a></li>
+        </ul>
+    </div>
+    <!-- Title -->
+    <div class="calcite-title calcite-overflow-hidden">
+        <span class="calcite-title-main">Hostel Booking</span>
+        <span class="calcite-title-divider hidden-xs"></span>
+        <span class="calcite-title-sub hidden-xs">Hostel booking app</span>
+    </div>
+    <!-- Nav -->
+    <ul class="calcite-nav nav navbar-nav">
+        <li>
+            <div class="calcite-navbar-search hidden-xs">
+                <div id="geocode"></div>
+            </div>
+        </li>
+    </ul>
+</nav><!--/.navbar -->
+{% block content %}
+{% endblock %}
+
+<!--script src="https://esri.github.io/calcite-bootstrap/scripts/vendor.js"></script-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all plugins or individual files as needed -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script src="{% static 'js/map.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
+<script src="{% static 'js/calcitemaps-v0.3.js' %}"></script>
+</body>
+</html>
