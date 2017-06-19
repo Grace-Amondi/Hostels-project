@@ -70,7 +70,7 @@ searchControl.on('results', function (data) {
 
 //var pop up button
 var popup = L.popup()
-    .setLatLng(latlng)
-    .setContent('<p>Hello world!<br />This is a nice popup.</p>')
+    .setLatLng(data.results[0].latlng)
+    .setContent(data.results[0].text)
     .openOn(map);
 
