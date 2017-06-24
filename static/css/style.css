@@ -22,7 +22,7 @@ html, body {
 
 .calcite-maps .esri-truncated-attribution {
     max-width: 100% !important;
-    width: 200px;
+    width: 10px;
 }
 
 .leaflet-touch .leaflet-bar {
