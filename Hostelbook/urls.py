@@ -18,7 +18,8 @@ from django.contrib import admin
 from hostels import views
 
 urlpatterns = [
+    url(r'^$', views.home, name='home'),
     url(r'^admin/', admin.site.urls),
     url(r'^hostel_data/', views.hostel_data_view, name='hostel_data'),
-    url(r'^', views.home, name='home'),
+
 ]

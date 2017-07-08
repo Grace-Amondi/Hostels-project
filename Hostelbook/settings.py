@@ -24,7 +24,7 @@ SECRET_KEY = 't#i0b++#^vggmy*vqg5ggh(^e94b12i7bj4%8=r7-jl9h3k9(v'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -82,7 +82,6 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
-
     }
 }
 
@@ -129,7 +128,7 @@ STATICFILES_DIRS = [
 # media files(images etc)
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': (37.010716, -1.102191, 37.021353, -1.088427),

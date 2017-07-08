@@ -1,76 +1,176 @@
-// ============
-// Esri-Leaflet
-// ============
-
-var map = L.map('map', {zoomControl: false}).setView([45.52, -122.68], 12),
-    layer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
-// layerLabels = L.esri.basemapLayer('xxxLabels').addTo(map);
-layerLabels = null,
-    worldTransportation = L.esri.basemapLayer('ImageryTransportation');
-
-
-var hostel_layer = L.geoJson(null);
-var data_url = '/hostel_data';
-$.getJSON(data_url, function (data) {
-    hostel_layer.addData(data);
-    map.fitBounds(hostel_layer.getBounds());
-    map.addLayer(hostel_layer)
+var map = L.map('map', {
+    center: [-1.09713135, 37.014170107681],
+    zoom: 15
 });
-
+var layer = L.esri.basemapLayer('Streets').addTo(map);
+var layerLabels;
 
 function setBasemap(basemap) {
     if (layer) {
         map.removeLayer(layer);
     }
-    if (basemap === 'OpenStreetMap') {
-        layer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png");
-    }
-    else {
-        layer = L.esri.basemapLayer(basemap);
-    }
+
+    layer = L.esri.basemapLayer(basemap);
+
     map.addLayer(layer);
+
     if (layerLabels) {
         map.removeLayer(layerLabels);
     }
 
-    if (basemap === 'ShadedRelief' || basemap === 'Oceans' || basemap === 'Gray' || basemap === 'DarkGray' || basemap === 'Imagery' || basemap === 'Terrain') {
+    if (basemap === 'ShadedRelief'
+        || basemap === 'Gray'
+        || basemap === 'DarkGray'
+        || basemap === 'Imagery'
+        || basemap === 'Terrain'
+    ) {
         layerLabels = L.esri.basemapLayer(basemap + 'Labels');
         map.addLayer(layerLabels);
     }
-
-    // add world transportation service to Imagery basemap
-    if (basemap === 'Imagery') {
-        worldTransportation.addTo(map);
-    } else if (map.hasLayer(worldTransportation)) {
-        // remove world transportation if Imagery basemap is not selected
-        map.removeLayer(worldTransportation);
-    }
 }
 
-L.control.zoom({
-    position: 'topright'
-}).addTo(map);
+function changeBasemap(basemaps) {
+    var basemap = basemaps.value;
+    setBasemap(basemap);
+}
 
-//var searchControl = L.esri.Geocoding.Controls.geosearch({expanded: true, collapseAfterResult: false, zoomToResult: false}).addTo(map);
-var searchControl = L.esri.Geocoding.geosearch({
-    expanded: true,
-    collapseAfterResult: false,
-    zoomToResult: false
-}).addTo(map);
+// var esriStreets = L.esri.basemapLayer('Imagery').addTo(map);
+//home button
 
-searchControl.on('results', function (data) {
-    if (data.results.length > 0) {
-        var popup = L.popup()
-            .setLatLng(data.results[0].latlng)
-            .setContent(data.results[0].text)
-            .openOn(map);
-        map.setView(data.results[0].latlng)
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(["leaflet"], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require('leaflet'));
+    } else {
+        root.L.Control.DefaultExtent = factory(root.L);
     }
-})
+}(this, function (L) {
 
-//var pop up button
-var popup = L.popup()
-    .setLatLng(data.results[0].latlng)
-    .setContent(data.results[0].text)
-    .openOn(map);
+    return (function () {
+        /* global L */
+        'use strict';
+        L.Control.DefaultExtent = L.Control.extend({
+            options: {
+                position: 'topleft',
+                text: 'Default Extent',
+                title: 'Zoom to default extent',
+                className: 'leaflet-control-defaultextent'
+            },
+            onAdd: function (map) {
+                this._map = map;
+                return this._initLayout();
+            },
+            setCenter: function (center) {
+                this._center = center;
+                return this;
+            },
+            setZoom: function (zoom) {
+                this._zoom = zoom;
+                return this;
+            },
+            _initLayout: function () {
+                var container = L.DomUtil.create('div', 'leaflet-bar ' +
+                    this.options.className);
+                this._container = container;
+                this._fullExtentButton = this._createExtentButton(container);
 
+                L.DomEvent.disableClickPropagation(container);
+
+                this._map.whenReady(this._whenReady, this);
+
+                return this._container;
+            },
+            _createExtentButton: function () {
+                var link = L.DomUtil.create('a', this.options.className + '-toggle',
+                    this._container);
+                link.href = '#';
+                link.innerHTML = this.options.text;
+                link.title = this.options.title;
+
+                L.DomEvent
+                    .on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
+                    .on(link, 'click', L.DomEvent.stop)
+                    .on(link, 'click', this._zoomToDefault, this);
+                return link;
+            },
+            _whenReady: function () {
+                if (!this._center) {
+                    this._center = this._map.getCenter();
+                }
+                if (!this._zoom) {
+                    this._zoom = this._map.getZoom();
+                }
+                return this;
+            },
+            _zoomToDefault: function () {
+                this._map.setView(this._center, this._zoom);
+            }
+        });
+
+        L.Map.addInitHook(function () {
+            if (this.options.defaultExtentControl) {
+                this.addControl(new L.Control.DefaultExtent());
+            }
+        });
+
+        L.control.defaultExtent = function (options) {
+            return new L.Control.DefaultExtent(options);
+        };
+
+        return L.Control.DefaultExtent;
+
+    }());
+    ;
+
+}));
+
+//adding hostel layer to map
+var hostel_layer = L.geoJson(null, {
+    pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, {
+                icon: L.icon({
+                    iconUrl: "/static/img/youthhostel (5).png",
+                    iconSize: [24, 28],
+                    iconAnchor: [12, 28],
+                    popupAnchor: [0, -25]
+                })
+            }
+        )
+    }
+});
+
+
+$.getJSON('/hostel_data', function (data) {
+    console.log(data);
+    hostel_layer.addData(data);
+    map.addLayer(hostel_layer);
+    map.fitBounds(hostel_layer.getBounds());
+});
+
+//fullscreen
+map.isFullscreen() // Is the map fullscreen?
+map.toggleFullscreen() // Either go fullscreen, or cancel the existing fullscreen.
+
+// `fullscreenchange` Event that's fired when entering or exiting fullscreen.
+map.on('fullscreenchange', function () {
+    if (map.isFullscreen()) {
+        console.log('entered fullscreen');
+    } else {
+        console.log('exited fullscreen');
+    }
+});
+map.addControl(new L.Control.Fullscreen());
+
+
+lc = L.control.locate({
+    strings: {
+        title: "Show me where I am, yo!"
+    }
+}).addTo(map);// slider2 = L.control.slider(function(value) {alert(value);}, {id:slider2, orientation: 'horizontal'});
+
+L.control.defaultExtent([-1.09713135, 37.014170107681])
+    .addTo(map);
+//
+// marker.bindPopup('<p>hello</p>');
+// marker.addTo(map);

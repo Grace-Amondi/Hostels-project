@@ -9,6 +9,7 @@ hostel_mapping = {
 
 hostels_shp = '/home/geogirl/Desktop/data/hostels.shp'
 
+
 def run(verbose=True):
     lm = LayerMapping(
         Hostel, hostels_shp, hostel_mapping,
